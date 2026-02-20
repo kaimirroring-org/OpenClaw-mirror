@@ -92,3 +92,23 @@ When user asks to mirror a repo from ThePipis to kaimirroring:
 3. Ensure `SOURCE_REPO_TOKEN` secret exists.
 4. Trigger initial run.
 5. Validate success and share run URL.
+6. Upsert Notion control row as source-of-truth.
+
+## Notion Control Table (source-of-truth)
+- Database: `GitHub Mirror Control`
+- Database ID: `5a5d8653-8edc-4cff-bd66-9411a3fc242a`
+- Status options: `Pending setup`, `Active`, `Paused`, `Error`
+- Script: `scripts/notion_mirror_upsert.py`
+
+Example:
+```bash
+NOTION_API_KEY=<token> \
+python3 scripts/notion_mirror_upsert.py \
+  "ThePipis/OpenClaw" \
+  "kaimirroring/OpenClaw-mirror" \
+  "Active" \
+  "*/30 * * * *" \
+  "Private" \
+  "https://github.com/kaimirroring/OpenClaw-mirror/actions/workflows/mirror.yml" \
+  "Mirror activo con GitHub Actions (30 min + manual)."
+```
