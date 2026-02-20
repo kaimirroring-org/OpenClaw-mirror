@@ -1,66 +1,49 @@
-# OpenClaw Workspace (Respaldo de configuración)
+# OpenClaw Workspace (Respaldo + Automatizaciones)
 
-Este repositorio guarda la configuración, memoria y personalización del asistente para poder restaurar rápido en migraciones (por ejemplo, cambio de VPS).
+Este repositorio guarda configuración, memoria y playbooks operativos del asistente para restauración rápida, continuidad y operación autónoma.
 
 ## Objetivo
 
-- Tener **versionado** de toda la configuración relevante del workspace.
-- Mantener **backups automáticos** con commits periódicos.
-- Generar **tags semanales** como puntos de recuperación.
-- Permitir **redundancia** con un segundo remoto (`mirror`) cuando esté configurado.
+- Versionar configuración relevante del workspace.
+- Mantener backups automáticos con commits periódicos.
+- Crear tags semanales como puntos de recuperación.
+- Mantener espejos (mirrors) automáticos de repositorios desde `ThePipis` hacia `kaimirroring-org`.
+- Usar Notion como fuente de verdad para habilitar/pausar mirrors.
 
-## Estructura y propósito de cada archivo/carpeta
+## Estructura principal
 
-### Raíz del repositorio
+### Archivos raíz
 
-- `AGENTS.md`  
-  Guía operativa del asistente dentro del workspace: memoria, seguridad, forma de trabajo, heartbeats y criterios de actuación.
-
-- `SOUL.md`  
-  Define la identidad/voz del asistente (estilo, límites, personalidad).
-
-- `USER.md`  
-  Perfil operativo del usuario: preferencias técnicas, infraestructura, reglas de aprobación y forma de trabajo.
-
-- `TOOLS.md`  
-  Notas locales de herramientas/entorno (atajos, dispositivos, preferencias técnicas específicas).
-
-- `IDENTITY.md`  
-  Identidad declarativa del asistente (nombre, vibra, avatar, etc.).
-
-- `HEARTBEAT.md`  
-  Checklist para tareas periódicas de heartbeat. Si está vacío, no se ejecutan chequeos periódicos adicionales.
-
-- `README.md`  
-  Este documento.
-
-- `.gitignore`  
-  Exclusiones de Git para evitar versionar archivos no deseados.
+- `AGENTS.md` → reglas operativas del asistente (memoria, seguridad, estilo de trabajo).
+- `SOUL.md` → identidad/tono del asistente.
+- `USER.md` → preferencias y contexto técnico del usuario.
+- `TOOLS.md` → notas locales del entorno.
+- `IDENTITY.md` → identidad declarativa del asistente.
+- `HEARTBEAT.md` → checklist de tareas periódicas (si está vacío, no agrega trabajo extra).
+- `MEMORY.md` → memoria de largo plazo curada.
+- `README.md` → este documento.
 
 ### Carpeta `memory/`
 
-- `memory/YYYY-MM-DD-*.md`  
-  Memoria diaria y notas cronológicas de contexto operativo.
+- `memory/YYYY-MM-DD-*.md` → memoria diaria cronológica.
+- `memory/github-mirroring-playbook.md` → procedimiento operativo corto de mirrors.
+- `memory/github-mirroring-system-complete.md` → documentación completa del sistema Notion + GitHub App + mirror-controller.
+- `memory/token-expiry-reminders.md` → recordatorios de rotación/expiración de tokens.
 
 ### Carpeta `.openclaw/`
 
-- `.openclaw/auto-backup.sh`  
-  Script de backup automático. Hace `git add -A`, crea commit si hay cambios y hace push a `origin` y también a `mirror` si existe.
+- `.openclaw/auto-backup.sh` → backup automático (`git add/commit/push`).
+- `.openclaw/weekly-tag.sh` → tag semanal `weekly-YYYY-Www`.
+- `.openclaw/auto-backup.log` → log de tareas automáticas.
+- `.openclaw/workspace-state.json` → estado interno de OpenClaw.
 
-- `.openclaw/weekly-tag.sh`  
-  Script de versionado semanal. Crea tag `weekly-YYYY-Www` y lo publica en `origin` y `mirror` (si existe).
+### Carpeta `scripts/`
 
-- `.openclaw/auto-backup.log`  
-  Log de ejecuciones automáticas del backup.
+- `scripts/notion_mirror_upsert.py` → crea/actualiza registros de mirror en Notion.
 
-- `.openclaw/workspace-state.json`  
-  Estado interno del workspace generado por OpenClaw.
+## Automatizaciones activas
 
-## Automatizaciones configuradas
-
-### 1) Backup automático cada 30 minutos
-
-Cron:
+### 1) Backup automático del workspace (cada 30 min)
 
 ```cron
 */30 * * * * /home/jose/.openclaw/workspace/.openclaw/auto-backup.sh >> /home/jose/.openclaw/workspace/.openclaw/auto-backup.log 2>&1
@@ -68,37 +51,47 @@ Cron:
 
 ### 2) Tag semanal automático
 
-Cron recomendado (UTC):
-
 ```cron
 15 3 * * 1 /home/jose/.openclaw/workspace/.openclaw/weekly-tag.sh >> /home/jose/.openclaw/workspace/.openclaw/auto-backup.log 2>&1
 ```
 
-## Redundancia con segundo repositorio (`mirror`)
+### 3) Mirroring automático (ThePipis -> kaimirroring-org)
 
-Para activar espejo en un segundo repo remoto:
+Controlado por GitHub Actions en:
+- `kaimirroring-org/mirror-controller`
+- Workflow: `.github/workflows/mirror-all.yml`
+- Frecuencia: `*/30 * * * *` + ejecución manual (`workflow_dispatch`)
 
-```bash
-git remote add mirror git@github.com:TU_USUARIO/TU_REPO_REDUNDANTE.git
-```
+## Notion como fuente de verdad
 
-Si ya existe y quieres cambiar URL:
+Base de datos: **GitHub Mirror Control**
 
-```bash
-git remote set-url mirror git@github.com:TU_USUARIO/TU_REPO_REDUNDANTE.git
-```
+Campos principales:
+- `Name` (repo origen, ej. `ThePipis/OpenClaw`)
+- `Repo Mirror` (repo destino, ej. `kaimirroring-org/OpenClaw-mirror`)
+- `Mirror Enabled` (checkbox)
+- `Status` (`Pending setup`, `Active`, `Paused`, `Error`)
+- `Last Sync` (fecha/hora)
+- `Cron`, `Workflow URL`, `Source Visibility`, `Notes`
 
-Una vez configurado `mirror`, los scripts empujan automáticamente backups y tags también a ese remoto.
+Comportamiento:
+- Si `Mirror Enabled = true` → el repo se sincroniza.
+- Si `Mirror Enabled = false` → se omite y pasa a `Paused`.
+- En éxito de sync → `Status = Active` y actualización de `Last Sync`.
 
-## Restauración rápida en nuevo VPS
+## Seguridad y acceso
 
-1. Clonar repo principal.
-2. Verificar llaves SSH para push.
-3. Instalar cron jobs.
-4. Validar ejecución manual de scripts (`auto-backup.sh` y `weekly-tag.sh`).
+- GitHub App para auth de mirroring (tokens temporales), evitando PAT por repo en operación normal.
+- Secrets requeridos en `mirror-controller`:
+  - `MIRROR_APP_ID`
+  - `MIRROR_APP_PRIVATE_KEY`
+  - `NOTION_API_KEY`
+  - `NOTION_MIRROR_DB_ID`
 
-## Nota de seguridad
+## Restauración rápida (resumen)
 
-- Usar llaves SSH dedicadas por repositorio (Deploy Keys o llave técnica separada).
-- Evitar tokens globales cuando no sean necesarios.
-- Proteger permisos en `~/.ssh` y revisar accesos periódicamente.
+1. Clonar este repo.
+2. Verificar secrets y acceso de GitHub App.
+3. Restaurar cron jobs de backup/tag.
+4. Validar ejecución manual de scripts y workflows.
+5. Confirmar sincronización en Notion + GitHub Actions.
