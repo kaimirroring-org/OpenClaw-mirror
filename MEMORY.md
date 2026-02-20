@@ -17,3 +17,4 @@
 - SEC-004.1 cerrado (tailnet-only): eliminado fallback de SSH público por IP; se mantiene acceso SSH solo por Tailscale (`100.64.0.0/10`).
 - Manual de fallback túnel SSH Windows (SEC-006A) en `memory/ssh-tunnel-fallback-windows-manual.md`.
 - Preferencia operativa reafirmada: para automatizaciones (ej. Discord), el asistente debe ejecutar de forma autónoma end-to-end, pero siempre presentar plan (objetivo/beneficio/impacto) y esperar aprobación explícita antes de cambios críticos.
+- Política de enrutado multi-modelo aprobada y activa: `memory/model-router-policy.md` (tiers A/B/C/D/E, failover y umbrales de uso premium <=20% / <=10%).
