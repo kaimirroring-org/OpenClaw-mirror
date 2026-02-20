@@ -14,5 +14,5 @@
 - SEC-006B implementado: acceso SSH privado por Tailscale y cierre de SSH público en firewall (origen tailnet `100.64.0.0/10`).
 - Manual operativo Tailscale (Windows laptop <-> VPS OL9) en `memory/tailscale-vps-laptop-secure-connection-manual.md`.
 - Checklist rápido de contingencia (60s post-reinicio) guardado en `memory/contingency-checklist-60s-vps-laptop-tailscale.md`.
-- SEC-004.1 aplicado como fallback: allow SSH público solo desde `35.151.231.132/32` con regla rich-rule, manteniendo `service ssh` global deshabilitado.
+- SEC-004.1 cerrado (tailnet-only): eliminado fallback de SSH público por IP; se mantiene acceso SSH solo por Tailscale (`100.64.0.0/10`).
 - Manual de fallback túnel SSH Windows (SEC-006A) en `memory/ssh-tunnel-fallback-windows-manual.md`.

@@ -7,7 +7,7 @@
 | SEC-002 | Permisos restrictivos en credenciales OpenClaw. | Sí: `/home/jose/.openclaw/credentials` en `700`, owner `jose`. | ⭐⭐⭐⭐☆ |
 | SEC-003 | Hardening SSH sin romper túnel local (`-L`). | **Sí (implementado ahora)**: `00-hardening.conf` activo; `X11Forwarding no`, `AllowAgentForwarding no`, `MaxAuthTries 3`, `LoginGraceTime 30`. | ⭐⭐⭐⭐⭐ |
 | SEC-004 | Firewall mínimo viable (sin servicios innecesarios en zona pública). | Sí: zona `public` con solo `dhcpv6-client`; sin puertos abiertos. | ⭐⭐⭐⭐⭐ |
-| SEC-004.1 | Restringir SSH a IP pública fija (opcional). | Sí: regla aplicada en zona `public` para `35.151.231.132/32` hacia TCP/22 (sin `service ssh` global). | ⭐⭐⭐⭐☆ |
+| SEC-004.1 | Restringir SSH a IP pública fija (opcional). | Cerrado/No aplicable por decisión: fallback por IP pública removido; operación `tailnet-only` (sin SSH público). | ⭐⭐⭐⭐☆ |
 | SEC-005 | Fail2ban activo para sshd (bloqueo de bruteforce). | Sí: jail `sshd` activo (stats y bans visibles). | ⭐⭐⭐⭐☆ |
 | SEC-006A | Acceso al panel por túnel SSH (sin exposición pública). | Sí (fallback documentado y operativo): manual en `memory/ssh-tunnel-fallback-windows-manual.md`; servidor compatible (OpenClaw loopback + SSH controlado). | ⭐⭐⭐⭐☆ |
 | SEC-006B | Acceso SSH privado por Tailscale (sin SSH público en internet). | Sí: Tailscale activo; firewall público sin `ssh`; acceso permitido por tailnet (`100.64.0.0/10`). | ⭐⭐⭐⭐⭐ |
