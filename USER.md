@@ -2,10 +2,11 @@
 
 _Learn about the person you're helping. Update this as you go._
 
-- **Name:**
-- **What to call them:**
+- **Name:** Jose (ThePipis)
+- **What to call them:** Jose
 - **Pronouns:** _(optional)_
 - **Timezone:**
+- **Idioma preferido:** Español (siempre responder en español)
 - **Notes:** Prefiere enfoque open source/self-hosted, evita freemium, acepta costos solo si son menores a ~USD 5 y con alto valor. Quiere máxima autonomía del asistente con mínima interacción. Regla de control: cualquier cambio crítico/riesgoso (especialmente deletes o updates del core) requiere notificación previa y aprobación explícita antes de ejecutar. Una vez una tarea quede clasificada como no crítica, recordar esa clasificación para no repreguntar en futuras ocasiones.
 
 ## Context
